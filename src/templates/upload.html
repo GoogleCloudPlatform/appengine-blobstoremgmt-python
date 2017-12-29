@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+
+{% block instruction %}
+  {% if message %}
+    <div class="alert alert-{{message_style|default('success', true)}}" role="alert">
+      {{ message }}
+    </div>
+  {% endif %}
+
+  Select a file to upload.
+{% endblock instruction %}
+
+{% block content %}
+<div class="container mb-3">
+  <div class="row">
+    <div class="col-lg">
+      <form method="POST" action="{{ upload_url }}" enctype="multipart/form-data">
+        <div class="form-group">
+          <input type="file"  name="file" class="form-control-file">
+        </div>
+        <button type="submit" name="submit" class="btn btn-primary btn-sm">Submit</button>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock content %}

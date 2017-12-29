@@ -1,0 +1,173 @@
+{% extends "base.html" %}
+
+{% block script %}
+<script>
+{% include 'index.js' %}
+</script>
+{% endblock %}
+
+{% block instruction %}
+  Select a column heading to change sort order, or use filters.
+  Selecting a column heading will clear filters.
+{% endblock instruction %}
+
+{% macro buttons() %}
+  <div class="container">
+    <div class="row">
+      <div class="col-sm">
+        <button class="btn btn-primary btn-sm blob-delete" disabled>Delete</button>
+      </div>
+      <div class="col-sm text-right">
+        {% if more %}
+          <button class="btn btn-secondary btn-sm next-page">Next Page &raquo;</button>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+{% endmacro %}
+
+{% macro col_header(header, filter) %}
+  <th scope="col">
+    <a href="#" id="nav_{{filter}}" class="{% if sort_col==filter %}selected{% endif %}">
+      {{header}}
+      {% if filter == sort_col %}
+        {% if sort_dir == 'asc'  %}
+          <img src="/static/images/ic_arrow_drop_down_black_18px.svg">
+        {% else %}
+          <img src="/static/images/ic_arrow_drop_up_black_18px.svg">
+        {% endif %}
+      {% endif %}
+    </a>
+  </th>
+{% endmacro %}
+
+{% macro filter_option(title, value, default=False) %}
+  <option value="{{value}}"
+    {% if filter == value or (default and not filter) %}selected{% endif %}
+    {% if default %}class="default"{% endif %}>
+    {{title}}
+  </option>
+{% endmacro %}
+
+{% macro filter_size_op_option(title, value, default=False) %}
+  <option value={{value}}
+    {% if size_op == value %}selected{% endif %}
+    {% if default %}class="default"{% endif %}>
+    {{title}}
+  </option>
+{% endmacro %}
+
+{% macro filter_size_unit_option(value, default=False) %}
+  <option value="{{value}}"
+    {% if size_unit == value %}selected{% endif %}
+    {% if default %}class="default"{% endif %}>
+    {{value}}
+  </option>
+{% endmacro %}
+
+{% macro filter_creation_op_option(title, value, default=False) %}
+  <option value="{{value}}"
+    {% if creation_op == value %}selected{% endif %}
+    {% if default %}class="default"{% endif %}>
+    {{title}}
+  </option>
+{% endmacro %}
+
+{% macro display_panel(value, default=False) %}
+  {% if filter != value and not default %}style="display: none;"{% endif %}
+{% endmacro %}
+
+{% block content %}
+
+<div class="container mb-3">
+  <div class="row">
+    <div class="col-lg">
+
+      <select id="filter-select">
+        {{ filter_option('Filter by name', 'filename', default=True)}}
+        {{ filter_option('Filter by type', 'content_type')}}
+        {{ filter_option('Filter by size', 'size')}}
+        {{ filter_option('Filter by creation date', 'creation')}}
+      </select>
+
+      <span id="filter_panel_filename" class="filter-panel" {{ display_panel('filename', default=True) }}>
+        <input id="filter_filename_prefix" type="text" value="{{filename_prefix}}" placeholder="Filter by name prefix..." size="50">
+      </span>
+
+      <span id="filter_panel_content_type" class="filter-panel" {{ display_panel('content_type') }}>
+        <input id="filter_content_type" type="text" value="{{content_type}}" placeholder="type/format" size="50">
+      </span>
+
+      <span id="filter_panel_size" class="filter-panel" {{ display_panel('size') }}>
+        <select id="filter_size_op">
+          {{ filter_size_op_option('>=', 'ge', default=True) }}
+          {{ filter_size_op_option('<=', 'le') }}
+        </select>
+        <input id="filter_size" type="text" value="{{size}}" placeholder="Size">
+        <select id="filter_size_unit">
+          {{ filter_size_unit_option('B')}}
+          {{ filter_size_unit_option('KB', default=True)}}
+          {{ filter_size_unit_option('MB')}}
+          {{ filter_size_unit_option('GB')}}
+        </select>
+      </span>
+
+      <span id="filter_panel_creation" class="filter-panel" {{ display_panel('creation') }}>
+        <select id="filter_creation_op">
+          {{ filter_creation_op_option('Past 24 hours', 'day')}}
+          {{ filter_creation_op_option('Past week', 'week', default=True)}}
+          {{ filter_creation_op_option('Past month', 'month')}}
+          {{ filter_creation_op_option('Date range', 'range')}}
+        </select>
+        <span id="filter_panel_creation_range" class="filter-panel" {% if creation_op != 'range' %}style="display: none;"{% endif %}>
+          <input id="filter_creation_start" type="text" value="{{creation_start}}">
+          —
+          <input id="filter_creation_end" type="text" value="{{creation_end}}">
+        </span>
+      </span>
+
+      <button id="filter-button" class="btn btn-primary btn-sm filter">Filter</button>
+    </div>
+  </div>
+</div>
+
+{{ buttons() }}
+
+<div class="container mt-3">
+  <div class="row">
+    <div class="col-sm">
+      <table class="table table-sm">
+        <thead>
+          <tr>
+            <th scope="col"><input type="checkbox" class="all-check"></th>
+            {{ col_header('Name', 'filename') }}
+            {{ col_header('Type', 'content_type') }}
+            {{ col_header('Size', 'size') }}
+            {{ col_header('Date created', 'creation') }}
+          </tr>
+        </thead>
+        <tbody>
+          {% for blob in blobs %}
+          <tr>
+            <th scope="row"><input type="checkbox" class="blob-check" id="{{ blob.key.id() }}"></th>
+            <td>
+              <a href="/serve?key={{blob.key.urlsafe()}}">{{ blob.filename|default("<em>Undefined</em>", true) }}</a>
+            </td>
+            <td>{{ blob.content_type }}</td>
+            <td>{{ blob.size }}</td>
+            <td class="date_utc" epoch="{{ blob.creation_epoch }}"></td>
+          </tr>
+          {% else %}
+          <tr>
+            <td colspan="5"><em>No blobs found.</em></td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+{{ buttons() }}
+
+{% endblock content %}
