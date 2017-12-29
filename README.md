@@ -1,5 +1,7 @@
 # Google App Engine Blobstore Blob Management Tool
 
+This is not an officially supported Google product.
+
 This tool provides a graphic user interface that can be used to manage
 blobs stored in the Google App Engine
 [Blobstore API](https://cloud.google.com/appengine/docs/standard/python/blobstore/).
