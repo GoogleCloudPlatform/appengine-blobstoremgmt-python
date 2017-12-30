@@ -38,6 +38,21 @@ $(function(){
     var epochMillis = parseInt(elem.attr("epoch"))*1000;
     elem.html(new Date(epochMillis).toLocaleString());
   });
+  $("#filter_filename_prefix").keyup(function(event) {
+    if (event.keyCode === 13) {
+      $("#filter-button").click();
+    }
+  });
+  $("#filter_content_type").keyup(function(event) {
+    if (event.keyCode === 13) {
+      $("#filter-button").click();
+    }
+  });
+  $("#filter_size").keyup(function(event) {
+    if (event.keyCode === 13) {
+      $("#filter-button").click();
+    }
+  });
 });
 
 // Bind the next page button click event.
