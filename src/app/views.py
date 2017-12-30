@@ -344,8 +344,8 @@ class BrowseArgs(object):
     return 'DATETIME(%d, %d, %d, %d, %d, %d)' % (
         dt.year, dt.month, dt.day, dt.hour, dt.minute, dt.second)
 
-  def _make_gql_str(self, st):
-    return "'%s'" % st.replace("'", "''")
+  def _make_gql_str(self, st, tilde=False):
+    return "'%s%s'" % (st.replace("'", "''"), tilde and '~' or '')
 
   def build_gql_query(self):
     """Builds a GQL (NDB) query string for the args."""
@@ -356,8 +356,9 @@ class BrowseArgs(object):
       return qstr
 
     if self.filter == 'filename':
-      qstr += 'WHERE filename >= %s ORDER BY filename' % (
-          self._make_gql_str(self.filename_prefix))
+      qstr += 'WHERE filename >= %s AND filename < %s ORDER BY filename' % (
+          self._make_gql_str(self.filename_prefix),
+          self._make_gql_str(self.filename_prefix, tilde=True))
       return qstr
 
     if self.filter == 'content_type':

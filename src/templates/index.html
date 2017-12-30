@@ -169,7 +169,13 @@
           <tr>
             <th scope="row"><input type="checkbox" class="blob-check" id="{{ blob.key.id() }}"></th>
             <td>
-              <a href="/serve?key={{blob.key.urlsafe()}}">{{ blob.filename|default("<em>Undefined</em>", true) }}</a>
+              <a href="/serve?key={{blob.key.urlsafe()}}">
+                {%- if blob.filename -%}
+                  {{ blob.filename }}
+                {%- else -%}
+                  <em>Undefined</em>
+                {%- endif -%}
+              </a>
             </td>
             <td>{{ blob.content_type }}</td>
             <td class="text-right pr-5">{{ format_size(blob.size) }}</td>
