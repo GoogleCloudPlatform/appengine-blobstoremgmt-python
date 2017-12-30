@@ -92,7 +92,7 @@
 {% endmacro %}
 
 {% macro display_panel(value, default=False) %}
-  {% if filter != value and not default %}style="display: none;"{% endif %}
+  {% if filter != value and (filter or not default) %}style="display: none;"{% endif %}
 {% endmacro %}
 
 {% block content %}

@@ -219,7 +219,7 @@ class BrowseArgs(object):
   def size(self):
     if not self.has_size:
       raise AttributeError('size')
-    return int(self.args['size'].strip())
+    return float(self.args['size'].strip())
 
   @property
   def has_size(self):
@@ -292,7 +292,7 @@ class BrowseArgs(object):
       try:
         size = self.size
       except ValueError:
-        raise ValueError('size must be an integer.')
+        raise ValueError('size must be a float.')
       if size < 0:
         raise ValueError('size must be non-negative.')
 
@@ -368,7 +368,7 @@ class BrowseArgs(object):
     if self.filter == 'size':
       op, direction = SIZE_OP_MAP[self.size_op]
       size = self.size * SIZE_UNIT_MULTIPLIER[self.size_unit]
-      qstr += 'WHERE size %s %s ORDER BY size %s' % (op, size, direction)
+      qstr += 'WHERE size %s %d ORDER BY size %s' % (op, size, direction)
       return qstr
 
     if self.filter == 'creation':

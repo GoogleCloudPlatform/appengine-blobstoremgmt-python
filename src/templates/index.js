@@ -95,7 +95,7 @@ $("#filter-button").bind("click", function() {
     location.search = q.set("filter", "size")
                        .set("size_op", $("#filter_size_op").val())
                        .set("size_unit", $("#filter_size_unit").val())
-                       .set("size", parseInt(sizeVal));
+                       .set("size", parseFloat(sizeVal));
     return;
   }
 
