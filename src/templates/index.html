@@ -1,5 +1,9 @@
 {% extends "base.html" %}
 
+{% set KB = 1024 %}
+{% set MB = KB*1024 %}
+{% set GB = MB*1024 %}
+
 {% block script %}
 <script>
 {% include 'index.js' %}
@@ -10,6 +14,18 @@
   Select a column heading to change sort order, or use filters.
   Selecting a column heading will clear filters.
 {% endblock instruction %}
+
+{% macro format_size(size) %}
+  {% if size >= GB %}
+    {{ '%.1f'|format(size/GB) }} GB
+  {% elif size >= MB %}
+    {{ '%.1f'|format(size/MB) }} MB
+  {% elif size >= KB %}
+    {{ '%.1f'|format(size/KB) }} KB
+  {% else %}
+    {{ size }} B&nbsp;
+  {% endif %}
+{% endmacro %}
 
 {% macro buttons() %}
   <div class="container">
@@ -26,8 +42,10 @@
   </div>
 {% endmacro %}
 
-{% macro col_header(header, filter) %}
-  <th scope="col">
+{% macro col_header(header, filter, right=False) %}
+  <th scope="col"
+    {% if right %}class="text-right pr-5"{% endif %}
+  >
     <a href="#" id="nav_{{filter}}" class="{% if sort_col==filter %}selected{% endif %}">
       {{header}}
       {% if filter == sort_col %}
@@ -142,7 +160,7 @@
             <th scope="col"><input type="checkbox" class="all-check"></th>
             {{ col_header('Name', 'filename') }}
             {{ col_header('Type', 'content_type') }}
-            {{ col_header('Size', 'size') }}
+            {{ col_header('Size', 'size', right=True) }}
             {{ col_header('Date created', 'creation') }}
           </tr>
         </thead>
@@ -154,7 +172,7 @@
               <a href="/serve?key={{blob.key.urlsafe()}}">{{ blob.filename|default("<em>Undefined</em>", true) }}</a>
             </td>
             <td>{{ blob.content_type }}</td>
-            <td>{{ blob.size }}</td>
+            <td class="text-right pr-5">{{ format_size(blob.size) }}</td>
             <td class="date_utc" epoch="{{ blob.creation_epoch }}"></td>
           </tr>
           {% else %}
