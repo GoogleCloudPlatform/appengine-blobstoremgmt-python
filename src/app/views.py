@@ -29,7 +29,7 @@ import webapp2
 from app import models
 
 
-PAGE_SIZE = 5
+PAGE_SIZE = 20
 VALID_SORT_COLUMNS = set(['filename', 'content_type', 'size', 'creation'])
 VALID_FILTERS = VALID_SORT_COLUMNS
 VALID_SORT_DIRECTIONS = set(['asc', 'desc'])
