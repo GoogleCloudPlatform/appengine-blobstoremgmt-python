@@ -2,7 +2,8 @@
 
 ## Disclaimer
 This is not an officially supported Google product and will not be
-continually maintained.
+continually maintained. This tool is an App Engine app run by a
+customer, and therefore has no SLA.
 
 ## Introduction
 This tool provides a graphic user interface that can be used to manage
@@ -52,7 +53,11 @@ create, update, and delete blobs rather than simply being able to view them. If 
 is not desired behavior, you can modify the `blob-management` service to implement
 additional fine-grained authorization.
 
-## Application scalability
+## Cost
 
-The default automatic scaling is used, so the service will scale to 0 when not in use.
+Running this app will incur some additional costs as it uses standard environment instances
+and may generate outgoing network bandwidth (e.g. downloading a blob). Details on App Engine
+pricing can be found [here](https://cloud.google.com/appengine/pricing). 
+
+**Note:** the default automatic scaling is used, so the service will scale to 0 when not in use.
 
